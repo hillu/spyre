@@ -1,0 +1,51 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: debian:stretch
+    steps:
+      - run:
+          name: Install build-dependencies
+          command: |
+            set -ex
+            echo "deb http://deb.debian.org/debian stretch-backports main contrib non-free" >> /etc/apt/sources.list
+            apt update
+            apt -qy dist-upgrade
+            apt -qy install --no-install-recommends \
+                make gcc gcc-multilib gcc-mingw-w64 autoconf automake \
+                libtool pkg-config wget ca-certificates sed \
+                git-core openssh-client curl jq zip
+            apt -qy install --no-install-recommends \
+                --target-release=stretch-backports \
+                golang-go
+            wget -nv -O /usr/local/bin/dep https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64
+            chmod 755 /usr/local/bin/dep
+      - checkout
+      - run:
+          name: diags
+          command: |
+            env
+            pwd
+            ls -l
+      - run:
+          name: Build
+          command: make release
+      - run:
+          name: Upload build artifact
+          command: |
+            test -z "${CIRCLE_TAG}" && exit 0
+            version="$(< cmd/spyre/version.go sed -ne '/var version/{ s/.*"\(.*\)"/\1/;p }')"
+            .circleci/github-release-file.sh \
+                ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} \
+                ${CIRCLE_TAG} \
+                spyre-${version}.zip \
+                application/zip
+
+workflows:
+  version: 2
+  build_upload:
+    jobs:
+      - build:
+          filters:
+            tags:
+              ignore: /^$/
