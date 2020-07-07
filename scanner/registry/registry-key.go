@@ -52,6 +52,7 @@ func keyExists(key string, name string) bool {
 	var baseHandle windows.Handle = 0xbad
 	for prefix, handle := range map[string]windows.Handle{
 		"HKEY_CLASSES_ROOT":     windows.HKEY_CLASSES_ROOT,
+		"HKCR":                  windows.HKEY_CLASSES_ROOT,
 		"HKEY_CURRENT_USER":     windows.HKEY_CURRENT_USER,
 		"HKCU":                  windows.HKEY_CURRENT_USER,
 		"HKEY_LOCAL_MACHINE":    windows.HKEY_LOCAL_MACHINE,
