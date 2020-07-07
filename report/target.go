@@ -38,6 +38,13 @@ func mkTarget(spec string) (target, error) {
 			}
 			switch {
 			case u.Scheme == "file":
+				// special case for absolute Windows paths such as file:///C:\Temp\spyre.log
+				if len(u.Path) >= 3 &&
+					u.Path[0] == '/' &&
+					('a' <= u.Path[1] && u.Path[1] <= 'z') || ('A' <= u.Path[1] && u.Path[1] <= 'Z') &&
+					u.Path[2] == ':' {
+					u.Path = u.Path[1:]
+				}
 				t.writer = &fileWriter{path: u.Path}
 			default:
 				return target{}, fmt.Errorf("unrecognized scheme '%s'", u.Scheme)
