@@ -26,6 +26,9 @@ func main() {
 	if zr, err := appendedzip.OpenFile(os.Args[0]); err == nil {
 		log.Notice("using embedded zip for configuration")
 		config.Fs = zipfs.New(zr)
+	} else if zr, err := appendedzip.OpenFile(programPrefix() + ".zip"); err == nil {
+		log.Noticef("using file %s.zip for configuration", programPrefix())
+		config.Fs = zipfs.New(zr)
 	} else {
 		abs, _ := filepath.Abs(
 			filepath.Join(filepath.Dir(os.Args[0])),
