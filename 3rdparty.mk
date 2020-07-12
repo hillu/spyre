@@ -25,7 +25,7 @@ $(or \
 3rdparty_JOBS    := 8
 3rdparty_TARGETS := yara musl openssl
 
-yara_VERSION := 3.11.0
+yara_VERSION := 4.0.2
 yara_URL     := https://github.com/VirusTotal/yara/archive/v$(yara_VERSION).tar.gz
 yara_ARCHS   := $(3rdparty_ARCHS)
 # This is executed in the source directory

@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  digest = "1:cb71f70ba5747e02ad6297f342f0f041eae338205266aaaa7dbd2ff283b4541c"
+  digest = "1:0ea31e901fa1ea883fa71a9c98a047d59e90bd4d2e4dec6100517bfdd5e2f51e"
   name = "github.com/hillu/go-yara"
   packages = ["."]
   pruneopts = ""
-  revision = "749ca5a829395667c29dcf14b41dee351ec66f81"
-  version = "v1.2.2"
+  revision = "c70f376f67c255b037957a49d969d618325be8cc"
+  version = "v4.0.2"
 
 [[projects]]
   digest = "1:956f655c87b7255c6b1ae6c203ebb0af98cf2a13ef2507e34c9bf1c0332ac0f5"
