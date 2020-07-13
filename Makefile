@@ -84,8 +84,12 @@ dep-ensure-update:  _gopath/.exists
 .PHONY: unit-test
 unit-test:
 	$(info [+] Running tests...)
+	$(info [+] GOROOT=$(GOROOT) GOOS=$(GOOS) GOARCH=$(GOARCH) CC=$(CC))
+	$(info [+] PKG_CONFIG_PATH=$(PKG_CONFIG_PATH))
+	$(info [+] CGO_CFLAGS=$(CGO_CFLAGS))
+	$(info [+] CGO_LDFLAGS=$(CGO_LDFLAGS))
 	$(GOROOT)/bin/go test -v \
-		-ldflags '-w -s -extldflags "-static"' \
+		-ldflags '-w -s -linkmode=external -extldflags "-static"' \
 		-tags yara_static \
 		$(patsubst %,$(NAMESPACE)/%,$(shell find -not -path '*/vendor/*' \
 							-not -path '*/_gopath/*' \
@@ -94,16 +98,16 @@ unit-test:
 
 $(EXE) unit-test: $(GOFILES) $(RCFILES) Makefile 3rdparty.mk 3rdparty-all.stamp _gopath/.exists vendor/.exists
 
-$(EXE): export CGO_CFLAGS += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --static --cflags yara)
-$(EXE): export CGO_LDFLAGS += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --static --libs yara)
 $(EXE):
+	$(info [+] Building spyre...)
 	$(info [+] GOROOT=$(GOROOT) GOOS=$(GOOS) GOARCH=$(GOARCH) CC=$(CC))
+	$(info [+] PKG_CONFIG_PATH=$(PKG_CONFIG_PATH))
 	$(info [+] CGO_CFLAGS=$(CGO_CFLAGS))
 	$(info [+] CGO_LDFLAGS=$(CGO_LDFLAGS))
 	mkdir -p $(@D)
 	$(GOROOT)/bin/go build \
 		-ldflags '-w -s -linkmode=external -extldflags "-static"' \
-		-tags no_pkg_config \
+		-tags yara_static \
 		-o $@ $(NAMESPACE)/cmd/spyre
 
 .PHONY: release
