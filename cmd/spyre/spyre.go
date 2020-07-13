@@ -62,8 +62,8 @@ func main() {
 	report.AddStringf("This is Spyre version %s, running on host %s", version, spyre.Hostname)
 	defer report.Close()
 
-	log.Infof("Scan started at %s", time.Now())
-	report.AddStringf("Scan started at %s", time.Now())
+	log.Infof("Scan started at %s", time.Now().Format("2006-01-02 15:04:05.000 -0700 MST"))
+	report.AddStringf("Scan started at %s", time.Now().Format("2006-01-02 15:04:05.000 -0700 MST"))
 
 	if err := scanner.ScanSystem(); err != nil {
 		log.Errorf("Error scanning system:: %v", err)
@@ -99,6 +99,6 @@ func main() {
 			return nil
 		})
 	}
-	log.Infof("Scan finished at %s", time.Now())
-	report.AddStringf("Scan finished at %s", time.Now())
+	log.Infof("Scan finished at %s", time.Now().Format("2006-01-02 15:04:05.000 -0700 MST"))
+	report.AddStringf("Scan finished at %s", time.Now().Format("2006-01-02 15:04:05.000 -0700 MST"))
 }
