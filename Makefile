@@ -7,7 +7,9 @@ include 3rdparty.mk
 
 # Use the newest version of the Go compiler, as installed by the
 # Debian packages
-GOROOT ?= $(firstword $(wildcard $(patsubst %,/usr/lib/go-%,1.11 1.10 1.9 1.8)))
+GOROOT ?= /usr/lib/go-$(lastword $(shell echo '$(foreach elem,\
+		$(sort $(patsubst go-%,%,$(notdir $(wildcard /usr/lib/go-1.*)))),\
+		$(elem)\n)' | sort --version-sort))
 NAMESPACE := github.com/dcso/spyre
 GOFILES := $(shell find $(CURDIR) \
 		-not -path '$(CURDIR)/vendor/*' \
