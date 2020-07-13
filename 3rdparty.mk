@@ -213,6 +213,6 @@ $(foreach pkg,$(3rdparty_TARGETS),\
 		$(foreach pkg,$(3rdparty_TARGETS),\
 			$(foreach arch,$($(pkg)_ARCHS),\
 				_3rdparty/build/$(arch)/$(pkg)-$($(pkg)_VERSION)/.build-stamp))
-	touch 3rdparty-all-stamp
+	touch 3rdparty-all.stamp
 
 .PHONY: 3rdparty-save-artifacts 3rdparty-restore-artifacts
