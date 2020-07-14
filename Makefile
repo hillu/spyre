@@ -86,8 +86,6 @@ unit-test:
 	$(info [+] Running tests...)
 	$(info [+] GOROOT=$(GOROOT) GOOS=$(GOOS) GOARCH=$(GOARCH) CC=$(CC))
 	$(info [+] PKG_CONFIG_PATH=$(PKG_CONFIG_PATH))
-	$(info [+] CGO_CFLAGS=$(CGO_CFLAGS))
-	$(info [+] CGO_LDFLAGS=$(CGO_LDFLAGS))
 	$(GOROOT)/bin/go test -v \
 		-ldflags '-w -s -linkmode=external -extldflags "-static"' \
 		-tags yara_static \
@@ -102,8 +100,6 @@ $(EXE):
 	$(info [+] Building spyre...)
 	$(info [+] GOROOT=$(GOROOT) GOOS=$(GOOS) GOARCH=$(GOARCH) CC=$(CC))
 	$(info [+] PKG_CONFIG_PATH=$(PKG_CONFIG_PATH))
-	$(info [+] CGO_CFLAGS=$(CGO_CFLAGS))
-	$(info [+] CGO_LDFLAGS=$(CGO_LDFLAGS))
 	mkdir -p $(@D)
 	$(GOROOT)/bin/go build \
 		-ldflags '-w -s -linkmode=external -extldflags "-static"' \

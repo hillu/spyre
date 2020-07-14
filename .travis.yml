@@ -1,20 +1,19 @@
-language: c
+language: minimal
 sudo: required
 services:
   - docker
 before_install:
-  - docker pull debian:stretch-slim
-  - pwd
-  - docker run --name build --rm --detach --interactive --mount type=bind,src=`pwd`,dst=/build debian:stretch-slim /bin/sh
+  - docker pull debian:buster-slim
+  - docker run --name build --rm --detach --interactive --mount type=bind,src=`pwd`,dst=/build debian:buster-slim /bin/sh
   - docker ps -a
   - docker exec -u root build apt-get -y update
-  - docker exec -u root build apt-get --no-install-recommends -y install make gcc gcc-multilib gcc-mingw-w64 autoconf automake libtool pkg-config ca-certificates wget sed git-core golang-1.8-go golang-go moreutils zip
-  - docker exec build ls -l /build
-  # FIXME, this is almost curlbash
-  - docker exec build wget -q -O /usr/local/bin/dep https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64
-  - docker exec build chmod 755  /usr/local/bin/dep
+  - docker exec -u root build apt-get --no-install-recommends -y install make gcc gcc-multilib gcc-mingw-w64 autoconf automake libtool pkg-config ca-certificates wget sed git-core golang-go moreutils zip go-dep
 script:
-  - travis_wait 40 docker exec build /build/.travis-make.sh make release
+  - travis_wait 40 docker exec build /build/.travis-make.sh make 3rdparty-all
+  - docker exec build make -C /build unit-test
+  - docker exec build make -C /build release
+after_script:
+  - docker exec build ls -l /build /build/_3rdparty/archive /build/_build/*
 after_failure:
   - tail -n 1000 .travis-make.log
 deploy:
@@ -22,8 +21,9 @@ deploy:
   skip_cleanup: true
   overwrite: true
   api_key:
-    secure: Ter05dBFUhaFWmw82Jj8C/VMNy1yVQ+PGgzHnzGd5Ba0C1YLdq2XwGEd/6cpVOlX4/kRm9m9y8t+OnHfZOE6BZzD9RhX9OzxArStQP1yDzYMGNjkJYS3rGExjwv4aj2Um9ldQBk3Ky0ZlpF2oA2zFbUDLPOP33D3EbjnsNAPFnBwq0xLPLhXFBELFWC9vaw2IuMu5lqSBWnjA4qliOo3K/riaXIuZsfQqiP5lrSlvDdOp3iUTI5kUJ2O+zYWUKJ+SC6EA3zJKZuEbuUwNm0O1YeFdLaQOLRJ9ntT0A1pY41Uw7Bb7sHZFJq+VbcL3AgwUULoJaI913TcinNZhiSlwO0FLjE/b7mD/2wE0mj/WhtNY5oyxe3O4ijw5bu1rmOOr2K6XQmZKNpD7EBOyfsXlqveBl/kY362W9IT6B7rhxnhjm4F4v4l8MB0pwhe3/PJIBaABY9Zf14LdSFVenv302put3AjP0DTgrnvVRpoQLUZ70a8VJc6XQh2WQD5NHKgSRFurXVMuKxh4ETk1DHo5eM837ehJW/EUPohIFfq3TMP4wIqLb6ddWP8WiwYt7JqmrTF0a64/b3kGsUxETxETTT7r8tsvQvgXEZr0Gl+8UgaPetR9lEkGx8q1MHQOJNIO29LuBhZ2ZpdMsUVELOaFmiME46EsXp3G0cSVotKHL8=
-  file: spyre.zip
+    secure: n4rvxOdbbvM12KHgEr2wuDQN+J06X+SMWb79LQDAQiUBAnxQvrg72ObhBdCIawnTI6/pTk23KtATQ9du1TVKDAYtOAKV1dTGBHBW8xPC0+/lbRLjJuaQRRjE2ZqQfR4q0FaSo3i/I6qwruUjTCWK98SSFkSBdEWxkbZA2kHZO3GStBrGgfs8kS6va3Tabp5qPwbSxlgjRnQoADEKw9wAAMHKOcJfWLku96Iv3JBLPvlGG45q3wxNFjE2OoL3tXagSOw99dZIusEColu7fv++73uxYWisG2dbxRERR2MDobLAgS8ewhmfWqHC/xjj2fbl6ZGnHjT+3QUfID6hfkUG2S+F6bl9imsjKfqqGUHVwGNUbW5RI/ASou+o9KrmE1Bd3FHDCnNbvwaiKJSWBJMvAJgTGXvg8FOpgh+KKGIoXx1wmIJtwYWeTPFhdqhtLhlE1mJkIwEOw+z0mKmC1uR/sAV8bIXSRy2y2gSIXbtSRR1CCw1DT2G1jdSNFdb2Kmyzh2wW+pDlbCXYJBA0gadvsGclhiqx6dzD96T+d3IWGgul1tFDFAJWPfRwAbtbsoQIjv+wQjnqCHCMQbIX0Tkrqu2k6KH7UyZ5T1YyNzQAeNSMdXZyYNO5dxfI5RpAVa6eJl7Ti5wvuNHdTJqnR66INt4YjR8CNk1U+P0pf9dB++A=
+  file_glob: true
+  file: spyre-*.zip
   on:
-    repo: DCSO/spyre
+    repo: hillu/spyre
     tags: true
