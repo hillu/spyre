@@ -94,7 +94,7 @@ unit-test:
 		$(patsubst %,$(NAMESPACE)/%,$(shell find -not -path '*/vendor/*' \
 							-not -path '*/_gopath/*' \
 							-type f -name '*_test.go' \
-							| xargs dirname | xargs -n1 basename))
+							| xargs dirname | sed -e 's/^\.//'))
 
 $(EXE) unit-test: $(GOFILES) $(RCFILES) Makefile 3rdparty.mk 3rdparty-all.stamp _gopath/.exists vendor/.exists
 
