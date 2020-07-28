@@ -1,4 +1,4 @@
-name: build
+name: build-macosx
 on: push
 
 jobs:
@@ -22,6 +22,9 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         run: gmake 3rdparty-all 3rdparty-save-artifacts
       - name: run unit-test
-        run: gmake unit-test
+        run: |
+          find _3rdparty/tgt
+          find _3rdparty/tgt -name '*.dylib' | xargs rm
+          gmake unit-test
       - name: build
         run: gmake release
