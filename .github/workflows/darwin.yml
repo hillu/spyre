@@ -28,3 +28,7 @@ jobs:
           gmake unit-test
       - name: build
         run: gmake release
+      - name: recon
+        run: |
+          find _build -type f | xargs -n1 otool -l || true
+          find _build -type f | xargs -n1 otool -L || true
