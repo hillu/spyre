@@ -76,6 +76,8 @@ $(EXE) unit-test: private export PATH := $(CURDIR)/_3rdparty/tgt/bin:$(PATH)
 dump-go-dependencies:
 	go mod download -json | jq -r '[.Path,"=",.Version] | add'
 
+MY_LDFLAGES := $(if $(findstring darwin,$(3rdparty_NATIVE_ARCH)),,-static)
+
 .PHONY: unit-test
 unit-test: test_pathspec ?= $(NAMESPACE)/...
 unit-test: test_flags ?= -v
@@ -85,7 +87,7 @@ unit-test:
 	$(info [+] GOROOT=$(GOROOT) GOOS=$(GOOS) GOARCH=$(GOARCH) CC=$(CC))
 	$(info [+] PKG_CONFIG_PATH=$(PKG_CONFIG_PATH))
 	$(GOROOT)/bin/go test $(test_flags) \
-		-ldflags '-w -s -linkmode=external -extldflags "-static"' \
+		-ldflags '-w -s -linkmode=external -extldflags "$(MY_LDFLAGES)"' \
 		-tags yara_static \
 		$(test_pathspec)
 
@@ -97,7 +99,7 @@ $(EXE):
 	$(info [+] PKG_CONFIG_PATH=$(PKG_CONFIG_PATH))
 	mkdir -p $(@D)
 	$(GOROOT)/bin/go build \
-		-ldflags '-w -s -linkmode=external -extldflags "-static"' \
+		-ldflags '-w -s -linkmode=external -extldflags "$(MY_LDFLAGS)"' \
 		-tags yara_static \
 		-o $@ $(NAMESPACE)/cmd/spyre
 
