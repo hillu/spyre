@@ -8,16 +8,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install build-dependencies
         run: brew install make autoconf automake libtool pkg-config wget gnu-sed git zip
-      - name: write cache marker
-        run: grep '_VERSION *:=' 3rdparty.mk > 3rdparty-versions.txt
-      - uses: actions/cache@v2
-        id: restore-cache
-        with:
-          path: _3rdparty/archive
-          key: ${{ runner.os }}-${{ hashFiles('3rdparty-versions.txt') }}
-      - name: extract 3rd-party dependencies from archive
-        if: steps.restore-cache.outputs.cache-hit == 'true'
-        run: gmake 3rdparty-restore-artifacts
       - name: build, archive 3rd-party dependencies
         if: steps.restore-cache.outputs.cache-hit != 'true'
         run: gmake 3rdparty-all 3rdparty-save-artifacts
