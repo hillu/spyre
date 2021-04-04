@@ -50,10 +50,13 @@ $(foreach arch,$(ARCHS),\
 		     $(if $(findstring mingw,$(arch)),windows),\
 		     $(if $(findstring darwin,$(arch)),darwin),\
 		     $(if $(findstring freebsd,$(arch)),freebsd),\
+		     $(if $(findstring openbsd,$(arch)),openbsd),\
 		     $(error Could not derive GOOS from $(arch))))\
 	$(eval _build/$(arch)/%: private export GOARCH=\
 		$(or $(if $(findstring x86_64,$(arch)),amd64),\
-		     $(if $(or $(findstring i386,$(arch)),$(findstring i686,$(arch))),386),\
+		     $(if $(findstring amd64,$(arch)),amd64),\
+		     $(if $(findstring i386,$(arch)),386),\
+		     $(if $(findstring i686,$(arch)),386),\
 		     $(error Could not derive GOARCH from $(arch)))))
 
 $(if $(findstring linux,$(3rdparty_NATIVE_ARCH)),\

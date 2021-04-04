@@ -18,7 +18,8 @@ $(or \
 		$(foreach arch,i686-w64-mingw32 x86_64-w64-mingw32,\
 			$(if $(not $(shell which $(arch)-gcc)),$(error $(arch)-gcc not found)))),\
 	$(if $(or $(findstring -apple-darwin,$(3rdparty_NATIVE_ARCH)),\
-		  $(findstring -freebsd,$(3rdparty_NATIVE_ARCH))),\
+		  $(findstring -freebsd,$(3rdparty_NATIVE_ARCH)),\
+		  $(findstring -openbsd,$(3rdparty_NATIVE_ARCH))),\
 		$(eval 3rdparty_ARCHS=$(3rdparty_NATIVE_ARCH))),\
 	$(error (Currently) unsupported native triplet $(3rdparty_NATIVE_ARCH)))
 
@@ -152,13 +153,16 @@ _3rdparty/build/$1/openssl-$(openssl_VERSION)/.build-stamp: \
 	private export MACHINE=$(or \
 		$(if $(and $(findstring freebsd,$1),$(findstring x86_64,$1)),\
 			$(patsubst x86_64-%,amd64-%,$1)),\
-		$(if $(findstring x86_64,$1),x86_64,i386))
+		$(if $(findstring opnbsd,$1),$1),\
+		$(if $(findstring x86_64,$1),x86_64,i386),\
+		$(error 3rdparty/openssl: Unknown MACHINE setting for $1))
 _3rdparty/build/$1/openssl-$(openssl_VERSION)/.build-stamp: \
 	private export SYSTEM=$(or \
 		$(if $(findstring mingw,$1),$(if $(findstring x86_64,$1),MINGW64,MINGW32)),\
 		$(if $(findstring linux,$1),linux2),\
 		$(if $(findstring darwin,$1),Darwin),\
 		$(if $(findstring freebsd,$1),FreeBSD),\
+		$(if $(findstring openbsd,$1),OpenBSD),\
 		$(error 3rdparty/openssl: Unknown SYSTEM setting for $1))
 _3rdparty/build/$1/openssl-$(openssl_VERSION)/.build-stamp: _3rdparty/src/openssl-$(openssl_VERSION)/.unpack-stamp
 	@mkdir -p $$(@D)
